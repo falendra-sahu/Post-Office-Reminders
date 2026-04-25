@@ -1,227 +1,327 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Post Office Customer Reminders</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProReminder | Official Agent Tool</title>
+    <link rel="icon" type="image/png" href="https://img.icons8.com/?size=80&id=UpnwZDa50fGv&format=png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
 
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        .app-container {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
 
-  <style>
-    body {
-      font-family: "Inter", sans-serif;
-      background: linear-gradient(135deg, #eef2ff, #f8fafc);
-      color: #1e293b;
-    }
-    .card-glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.4); transition: all 0.25s ease-in-out; }
-    .card-glass:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08); }
-    .input-focus { transition: all 0.25s ease-in-out; }
-    .input-focus:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
-    .btn { transition: all 0.2s ease-in-out; }
-    .btn:hover { transform: scale(1.03); }
-    .modal-bg { animation: fadeIn 0.3s ease; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    #notification-bar { animation: fadeInOut 2.5s ease; }
-    @keyframes fadeInOut {
-      0% { opacity: 0; transform: translateY(20px); }
-      10%, 90% { opacity: 1; transform: translateY(0); }
-      100% { opacity: 0; transform: translateY(20px); }
-    }
-  </style>
+        .input-field {
+            font-size: 14px;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            width: 100%;
+            transition: all 0.15s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .label-text {
+            font-size: 12px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        /* Clean Buttons without background colors */
+        .btn-action {
+            border: 1px solid #d1d5db;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: #374151;
+            transition: all 0.2s ease;
+            background: transparent;
+        }
+
+        .btn-action:hover {
+            background: #f9fafb;
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+
+        .btn-primary-action {
+            border: 1px solid #2563eb;
+            color: #2563eb;
+        }
+
+        .msg-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            background: #ffffff;
+            position: relative;
+        }
+
+        .msg-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.08);
+            border-color: #2563eb;
+        }
+
+        /* Specific Underline for title text only */
+        .title-underline-container {
+            margin-bottom: 16px;
+        }
+
+        .title-text {
+            display: inline-block;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 2px; /* Just below the text */
+            line-height: 1.2;
+        }
+
+        .step-number {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            background: #1f2937;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 800;
+            z-index: 10;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(2px);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            max-width: 380px;
+            width: 100%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        #notification-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2937;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 99px;
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 200;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .show-notify { opacity: 1 !important; }
+    </style>
 </head>
+<body class="p-4 md:p-8">
 
-<body class="min-h-screen p-4 md:p-8">
-  <div class="max-w-5xl mx-auto space-y-6">
-    <header class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-center py-6 rounded-2xl shadow-xl">
-      <h1 class="text-3xl font-bold tracking-tight">📬 Post Office Reminders</h1>
-      <p class="text-sm opacity-80 mt-1">Manage, Copy, or Share</p>
-    </header>
+    <div class="max-w-4xl mx-auto space-y-6">
+        <div class="app-container rounded-2xl overflow-hidden">
+            <div class="p-6 border-b flex items-center justify-between bg-white">
+                <div class="flex items-center gap-3">
+                    <div class="bg-blue-600 p-2.5 rounded-xl shadow-lg shadow-blue-100">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-gray-900 leading-tight">Customer Reminders</h1>
+                        <p class="text-xs text-gray-500 font-medium">Post Office Agent Utility</p>
+                    </div>
+                </div>
+            </div>
 
-    <!-- Agent Name -->
-    <div class="card-glass p-5 rounded-2xl shadow-md">
-      <label for="agent-name-input" class="block text-sm font-medium text-gray-700 mb-2">Agent Name / Post Office (Signature)</label>
-      <input type="text" id="agent-name-input" onkeyup="updateAgentName()" 
-             placeholder="e.g., फालेन्द्र साहू, पोस्ट ऑफिस एजेंट, हथबंद"
-             value="फालेन्द्र साहू, पोस्ट ऑफिस एजेंट, हथबंद"
-             class="w-full border-gray-300 rounded-xl p-3 shadow-sm input-focus" />
+            <div class="p-6 space-y-6">
+                <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <label class="label-text">Agent Signature / Post Office</label>
+                    <input type="text" id="agent-name-input" onkeyup="updateAgentName()" 
+                           value="फालेन्द्र साहू, पोस्ट ऑफिस एजेंट, हथबंद"
+                           class="input-field font-medium" placeholder="Enter your name and office">
+                </div>
+
+                <div class="relative">
+                    <input type="text" id="search-input" onkeyup="filterMessages()" 
+                           placeholder="Search by title..." 
+                           class="input-field pl-10 h-12">
+                    <div class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </div>
+                </div>
+
+                <div id="messages-container" class="grid sm:grid-cols-2 gap-6 pt-2">
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Search -->
-    <div class="relative">
-      <input type="text" id="search-input" onkeyup="filterMessages()" 
-             placeholder="🔍 Search messages by title..."
-             class="w-full border-gray-300 rounded-2xl p-3 pr-10 shadow-sm input-focus" />
-      <button id="clear-search-button" onclick="clearSearch()" 
-              class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden">
-        ✕
-      </button>
+    <div id="custom-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div id="modal-header" class="mb-4">
+                <h3 id="modal-title" class="text-lg font-bold text-gray-900">Customize Message</h3>
+                <p id="modal-desc" class="text-xs text-gray-500 mt-1">Fill the details to generate reminder.</p>
+            </div>
+            
+            <div id="modal-body" class="space-y-4 mb-6 text-left"></div>
+
+            <div class="flex gap-3">
+                <button onclick="closeModal()" class="flex-1 btn-action">Cancel</button>
+                <button id="modal-copy-btn" class="flex-1 btn-action btn-primary-action">Copy</button>
+                <button id="modal-share-btn" class="flex-1 btn-action" style="background:#1f2937; color:white; border:none;">Share</button>
+            </div>
+        </div>
     </div>
 
-    <div id="messages-container" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+    <div id="notification-bar">Message Copied!</div>
 
-    <div id="notification-bar"
-         class="fixed bottom-5 left-1/2 transform -translate-x-1/2 px-5 py-3 bg-gray-900 text-white rounded-lg shadow-xl text-sm hidden">
-      Message Copied!
-    </div>
-  </div>
+    <script>
+        let agentName = "फालेन्द्र साहू, पोस्ट ऑफिस एजेंट, हथबंद";
+        
+        const messages = [
+            { id: 1, title: "New RD Account Started", text: "प्रिय ग्राहक,\nआपका RD खाता पोस्ट ऑफिस हथबंद में सफलतापूर्वक सक्रिय हो गया है।\nपासबुक की फोटो सूचना हेतु भेजी जा रही है।\nमूल पासबुक मेरे पास सुरक्षित रखी गई है, ताकि हर माह की एंट्री समय पर की जा सके और निकासी या मैच्योरिटी के समय आपको दी जाएगी।\nधन्यवाद।\n{agent_signature}" },
+            { id: 2, title: "Monthly Deposit Reminder", text: "प्रिय ग्राहक,\nआपके RD खाते की मासिक किस्त इस माह देय है।\nकृपया समय पर राशि जमा करें ताकि खाता नियमित बना रहे और ब्याज का लाभ मिलता रहे।\nधन्यवाद।\n{agent_signature}" },
+            { id: 3, title: "Payment Received Confirmation", template: true, fields: ['received_amount'], text: "प्रिय ग्राहक,\nहमें आपके द्वारा ₹{received_amount} की राशि प्राप्त हो गई है।\nजल्द ही आपको पोस्ट ऑफिस की ओर से पुष्टि संदेश (SMS) प्राप्त होगा।\n{agent_signature}" },
+            { id: 4, title: "Payment Credit Notice", template: true, fields: ['account_suffix', 'deposit_amount', 'deposit_date', 'current_balance'], text: "प्रिय ग्राहक,\nआपके RD खाता संख्या XXXXXX{account_suffix} में ₹{deposit_amount} की राशि {deposit_date} को जमा की गई है।\nआपका वर्तमान बैलेंस ₹{current_balance} है।\nधनराशि आपके खाते में सफलतापूर्वक जमा कर दी गई है।\n{agent_signature}" },
+            { id: 5, title: "Missed Installment Alert", template: true, fields: ['missed_months'], text: "प्रिय ग्राहक,\nआपके RD खाते में पिछले {missed_months} माह से राशि जमा नहीं हुआ है।\nकृपया बकाया राशि के साथ फाइन (Fine) भी जल्द जमा करें,\nअन्यथा खाता बंद हो सकता है।\nसभी बकाया राशि जमा करने पर खाता पुनः सक्रिय हो जाएगा।\nधन्यवाद।\n{agent_signature}" },
+            { id: 6, title: "Inactive Account Warning", text: "प्रिय ग्राहक,\nआपके खाते में लंबे समय से कोई राशि जमा नहीं हुआ है।\nपोस्ट ऑफिस नियमों के अनुसार लगातार 6 माह तक राशि जमा न होने पर खाता बंद हो जायेगा।\nकृपया बकाया राशि जमा कर खाता चालू रखें।\nधन्यवाद।\n{agent_signature}" },
+            { id: 7, title: "Maturity Notice", template: true, fields: ['account_suffix'], text: "प्रिय ग्राहक,\nआपका RD खाता संख्या XXXXXX{account_suffix} परिपक्व (mature) हो गया है।\nकृपया अपनी पासबुक मुझसे प्राप्त करें और पोस्ट ऑफिस से राशि प्राप्त करें।\n\nआप चाहें तो हमसे नया RD खाता भी खुलवा सकते हैं।\nधन्यवाद।\n{agent_signature}" }
+        ];
 
-  <!-- EXISTING MODALS -->
-  <div id="msg3-modal" class="hidden fixed inset-0 modal-bg bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    <div class="bg-white/90 rounded-2xl p-6 max-w-sm w-full shadow-2xl">
-      <h2 class="text-xl font-bold text-indigo-700 mb-2">Missed Installment Alert</h2>
-      <p class="text-sm text-gray-600 mb-4">Enter the number of missed months.</p>
-      <input type="number" id="missed-months" class="w-full border-gray-300 rounded-xl p-3 mb-4 input-focus" placeholder="e.g., 2" min="1" max="6" />
-      <div class="flex justify-end space-x-3">
-        <button onclick="closeMsg3Modal()" class="btn px-4 py-2 bg-gray-200 rounded-lg">Cancel</button>
-        <button onclick="handleMsg3Action('copy')" class="btn px-4 py-2 bg-green-500 text-white rounded-lg">Copy</button>
-        <button onclick="handleMsg3Action('share')" class="btn px-4 py-2 bg-indigo-600 text-white rounded-lg">Share</button>
-      </div>
-    </div>
-  </div>
+        window.onload = () => {
+            agentName = document.getElementById("agent-name-input").value.trim();
+            renderMessages();
+        };
 
-  <div id="msg4-modal" class="hidden fixed inset-0 modal-bg bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    <div class="bg-white/90 rounded-2xl p-6 max-w-sm w-full shadow-2xl">
-      <h2 class="text-xl font-bold text-indigo-700 mb-2">Maturity Notice</h2>
-      <p class="text-sm text-gray-600 mb-4">Enter the last 4 digits of the RD account number.</p>
-      <input type="text" id="maturity-account-suffix" maxlength="4"
-             oninput="enforceFourDigit(this)" class="w-full border-gray-300 rounded-xl p-3 mb-4 input-focus" placeholder="e.g., 1234" />
-      <div class="flex justify-end space-x-3">
-        <button onclick="closeMsg4Modal()" class="btn px-4 py-2 bg-gray-200 rounded-lg">Cancel</button>
-        <button onclick="handleMsg4Action('copy')" class="btn px-4 py-2 bg-green-500 text-white rounded-lg">Copy</button>
-        <button onclick="handleMsg4Action('share')" class="btn px-4 py-2 bg-indigo-600 text-white rounded-lg">Share</button>
-      </div>
-    </div>
-  </div>
+        function updateAgentName() { agentName = document.getElementById("agent-name-input").value.trim() || "Post Office Agent"; }
+        function getSignedContent(text) { return text.replace("{agent_signature}", `– ${agentName}`); }
 
-  <div id="msg6-modal" class="hidden fixed inset-0 modal-bg bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    <div class="bg-white/90 rounded-2xl p-6 max-w-sm w-full shadow-2xl">
-      <h2 class="text-xl font-bold text-indigo-700 mb-2">Payment Credit Notice</h2>
-      <p class="text-sm text-gray-600 mb-4">Fill the deposit details below.</p>
-      <input type="text" id="account-suffix" maxlength="4" oninput="enforceFourDigit(this)" placeholder="Last 4 digits e.g., 1234"
-             class="w-full border-gray-300 rounded-xl p-3 mb-3 input-focus" />
-      <input type="text" id="deposit-amount" placeholder="Deposit Amount ₹" oninput="formatIndianNumber(this)"
-             class="w-full border-gray-300 rounded-xl p-3 mb-3 input-focus" />
-      <input type="date" id="deposit-date" class="w-full border-gray-300 rounded-xl p-3 mb-3 input-focus" />
-      <input type="text" id="current-balance" placeholder="Current Balance ₹" oninput="formatIndianNumber(this)"
-             class="w-full border-gray-300 rounded-xl p-3 mb-4 input-focus" />
-      <div class="flex justify-end space-x-3">
-        <button onclick="closeMsg6Modal()" class="btn px-4 py-2 bg-gray-200 rounded-lg">Cancel</button>
-        <button onclick="handleMsg6Action('copy')" class="btn px-4 py-2 bg-green-500 text-white rounded-lg">Copy</button>
-        <button onclick="handleMsg6Action('share')" class="btn px-4 py-2 bg-indigo-600 text-white rounded-lg">Share</button>
-      </div>
-    </div>
-  </div>
+        function showNotification(msg) { 
+            const bar = document.getElementById("notification-bar"); 
+            bar.textContent = msg; 
+            bar.classList.add("show-notify"); 
+            setTimeout(() => bar.classList.remove("show-notify"), 2000); 
+        }
 
-  <!-- NEW: Payment Received Modal -->
-  <div id="msg7-modal" class="hidden fixed inset-0 modal-bg bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    <div class="bg-white/90 rounded-2xl p-6 max-w-sm w-full shadow-2xl">
-      <h2 class="text-xl font-bold text-indigo-700 mb-2">Payment Received Confirmation</h2>
-      <p class="text-sm text-gray-600 mb-4">Enter the received amount.</p>
-      <input type="text" id="received-amount" placeholder="Received Amount ₹" oninput="formatIndianNumber(this)"
-             class="w-full border-gray-300 rounded-xl p-3 mb-4 input-focus" />
-      <div class="flex justify-end space-x-3">
-        <button onclick="closeMsg7Modal()" class="btn px-4 py-2 bg-gray-200 rounded-lg">Cancel</button>
-        <button onclick="handleMsg7Action('copy')" class="btn px-4 py-2 bg-green-500 text-white rounded-lg">Copy</button>
-        <button onclick="handleMsg7Action('share')" class="btn px-4 py-2 bg-indigo-600 text-white rounded-lg">Share</button>
-      </div>
-    </div>
-  </div>
+        function copyText(t) { 
+            navigator.clipboard.writeText(t).then(() => showNotification("Message Copied!")); 
+            closeModal();
+        }
 
-  <script>
-    let agentName = "फालेन्द्र साहू, पोस्ट ऑफिस एजेंट हथबंद";
-    window.onload = function () {
-      const today = new Date();
-      document.getElementById("deposit-date").value = today.toISOString().split("T")[0];
-      agentName = document.getElementById("agent-name-input").value.trim();
-      renderMessages();
-    };
+        async function shareText(t) { 
+            if (navigator.share) {
+                await navigator.share({ text: t }); 
+            } else {
+                showNotification("Share not supported!");
+            }
+            closeModal();
+        }
 
-    const messages = [
-      { id: 1, title: "New RD Account Started", text: "प्रिय ग्राहक,\nआपका RD खाता पोस्ट ऑफिस हथबंद में सफलतापूर्वक सक्रिय हो गया है।\nपासबुक की फोटो सूचना हेतु भेजी जा रही है।\nमूल पासबुक मेरे पास सुरक्षित रखी गई है, ताकि हर माह की एंट्री समय पर की जा सके और निकासी या मैच्योरिटी के समय आपको दी जाएगी।\nधन्यवाद।\n{agent_signature}" },
-      { id: 2, title: "Monthly Deposit Reminder", text: "प्रिय ग्राहक,\nआपके RD खाते की मासिक किस्त इस माह देय है।\nकृपया समय पर राशि जमा करें ताकि खाता नियमित बना रहे और ब्याज का लाभ मिलता रहे।\nधन्यवाद।\n{agent_signature}" },
-      { id: 3, title: "Missed Installment Alert", template: true, text: "प्रिय ग्राहक,\nआपके RD खाते में पिछले {missed_months} माह से राशि जमा नहीं हुआ है।\nकृपया बकाया राशि के साथ फाइन (Fine) भी जल्द जमा करें,\nअन्यथा खाता बंद हो सकता है।\nसभी बकाया राशि जमा करने पर खाता पुनः सक्रिय हो जाएगा।\nधन्यवाद।\n{agent_signature}" },
-      { id: 4, title: "Maturity Notice", template: true, text: "प्रिय ग्राहक,\nआपका RD खाता संख्या XXXXXX{account_suffix} परिपक्व (mature) हो गया है।\nकृपया अपनी पासबुक मुझसे प्राप्त करें और पोस्ट ऑफिस से राशि प्राप्त करें।\n\nआप चाहें तो हमसे नया RD खाता भी खुलवा सकते हैं।\nयह आपके भविष्य की बचत के लिए एक बेहतर विकल्प होगा।\n\nधन्यवाद।\n{agent_signature}" },
-      { id: 5, title: "Inactive Account Warning", text: "प्रिय ग्राहक,\nआपके खाते में लंबे समय से कोई राशि जमा नहीं हुआ है।\nपोस्ट ऑफिस नियमों के अनुसार लगातार 6 माह तक राशि जमा न होने पर खाता बंद हो जायेगा।\nकृपया बकाया राशि जमा कर खाता चालू रखें।\nधन्यवाद।\n{agent_signature}" },
-      { id: 6, title: "Payment Credit Notice", template: true, text: "प्रिय ग्राहक,\nआपके RD खाता संख्या XXXXXX{account_suffix} में ₹{deposit_amount} की राशि {deposit_date} को जमा की गई है।\nआपका वर्तमान बैलेंस ₹{current_balance} है।\nधनराशि आपके खाते में सफलतापूर्वक जमा कर दी गई है।\n{agent_signature}" },
-      { id: 7, title: "Payment Received Confirmation", template: true, text: "प्रिय ग्राहक,\nहमें आपके द्वारा ₹{received_amount} की राशि प्राप्त हो गई है।\nजल्द ही आपको पोस्ट ऑफिस की ओर से पुष्टि संदेश (SMS) प्राप्त होगा।\n{agent_signature}" }
-    ];
+        function filterMessages() {
+            const filter = document.getElementById("search-input").value.toLowerCase();
+            renderMessages(messages.filter(m => m.title.toLowerCase().includes(filter)));
+        }
 
-    function updateAgentName() { agentName = document.getElementById("agent-name-input").value.trim() || "Post Office Agent"; }
-    function getSignedContent(text) { return text.replace("{agent_signature}", `– ${agentName}`); }
-    function showNotification(msg) { const bar = document.getElementById("notification-bar"); bar.textContent = msg; bar.classList.remove("hidden"); setTimeout(() => (bar.classList.add("hidden")), 2300); }
-    function copyText(t) { navigator.clipboard.writeText(t).then(() => showNotification("Message Copied!")); }
-    async function shareText(t) { if (navigator.share) await navigator.share({ title: "Post Office Reminder", text: t }); else showNotification("Share not supported, please copy instead."); }
+        function renderMessages(data = messages) {
+            const container = document.getElementById("messages-container");
+            container.innerHTML = data.map((msg, index) => `
+                <div class="msg-card">
+                    <div class="step-number">${index + 1}</div>
+                    <div class="title-underline-container">
+                        <div class="title-text">
+                            <h3 class="text-[14px] font-bold text-gray-900 pr-2">${msg.title}</h3>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        ${msg.template 
+                            ? `<button onclick="openCustomModal(${msg.id})" class="btn-action btn-primary-action flex-1">Customize</button>`
+                            : `<button onclick="copyText(getSignedContent('${msg.text.replace(/\n/g, '\\n')}'))" class="btn-action flex-1">Copy</button>
+                               <button onclick="shareText(getSignedContent('${msg.text.replace(/\n/g, '\\n')}'))" class="btn-action flex-1">Share</button>`
+                        }
+                    </div>
+                </div>
+            `).join("");
+        }
 
-    function indianFormat(num){return Number(String(num).replace(/,/g,"")).toLocaleString("en-IN");}
+        function openCustomModal(id) {
+            const msg = messages.find(m => m.id === id);
+            const body = document.getElementById('modal-body');
+            document.getElementById('modal-title').innerText = msg.title;
+            body.innerHTML = '';
 
-    function formatIndianNumber(input){
-      let val=input.value.replace(/,/g,"").replace(/\D/g,"");
-      if(!val)return input.value="";
-      input.value=Number(val).toLocaleString("en-IN");
-    }
+            msg.fields.forEach(field => {
+                const label = field.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+                let inputHtml = `<input type="${field === 'deposit_date' ? 'date' : 'text'}" id="field-${field}" 
+                                 class="input-field" placeholder="Enter ${label}" 
+                                 ${field === 'deposit_date' ? `value="${new Date().toISOString().split('T')[0]}"` : ''}
+                                 ${field.includes('amount') || field.includes('balance') ? 'oninput="formatCurrency(this)"' : ''}>`;
+                
+                body.innerHTML += `<div><label class="label-text">${label}</label>${inputHtml}</div>`;
+            });
 
-    function enforceFourDigit(el){
-      el.value=el.value.replace(/\D/g,"").slice(0,4);
-    }
+            document.getElementById('modal-copy-btn').onclick = () => processAction(id, 'copy');
+            document.getElementById('modal-share-btn').onclick = () => processAction(id, 'share');
+            document.getElementById('custom-modal').style.display = 'flex';
+        }
 
-    function filterMessages() {
-      const filter = document.getElementById("search-input").value.toLowerCase();
-      document.getElementById("clear-search-button").classList.toggle("hidden", !filter);
-      renderMessages(messages.filter(m => m.title.toLowerCase().includes(filter)));
-    }
+        function processAction(id, type) {
+            const msg = messages.find(m => m.id === id);
+            let finalTxt = msg.text;
+            let isValid = true;
 
-    function clearSearch() {
-      document.getElementById("search-input").value = "";
-      document.getElementById("clear-search-button").classList.add("hidden");
-      renderMessages();
-    }
+            msg.fields.forEach(field => {
+                let val = document.getElementById(`field-${field}`).value;
+                if(!val) isValid = false;
+                if(field === 'deposit_date') val = val.split("-").reverse().join("-");
+                finalTxt = finalTxt.replace(`{${field}}`, val);
+            });
 
-    function handleMessageAction(id, action) {
-      const msg = messages.find(m => m.id === id);
-      if (msg.template) {
-        if (id === 3) openMsg3Modal();
-        if (id === 4) openMsg4Modal();
-        if (id === 6) openMsg6Modal();
-        if (id === 7) openMsg7Modal();
-      } else {
-        const txt = getSignedContent(msg.text);
-        action === "copy" ? copyText(txt) : shareText(txt);
-      }
-    }
+            if(!isValid) return showNotification("Please fill all fields!");
+            const signedTxt = getSignedContent(finalTxt);
+            type === 'copy' ? copyText(signedTxt) : shareText(signedTxt);
+        }
 
-    function renderMessages(data = messages) {
-      const c = document.getElementById("messages-container");
-      c.innerHTML = data.length
-        ? data.map(msg => `
-        <div class="card-glass p-5 rounded-2xl shadow-md border-l-4 ${msg.template ? 'border-yellow-400' : 'border-indigo-500'}">
-          <h2 class="text-lg font-semibold mb-3">${msg.title}</h2>
-          <div class="flex space-x-3">
-            ${msg.template
-                ? `<button onclick="handleMessageAction(${msg.id}, 'customize')" class="btn flex-1 bg-yellow-500 text-white font-semibold py-2 rounded-lg">Customize</button>`
-                : `<button onclick="handleMessageAction(${msg.id}, 'copy')" class="btn flex-1 bg-green-500 text-white font-semibold py-2 rounded-lg">Copy</button>
-                   <button onclick="handleMessageAction(${msg.id}, 'share')" class="btn flex-1 bg-indigo-600 text-white font-semibold py-2 rounded-lg">Share</button>`}
-          </div>
-        </div>`).join("")
-        : `<p class="text-center text-gray-500 text-lg py-10">No messages found.</p>`;
-    }
+        function closeModal() { document.getElementById('custom-modal').style.display = 'none'; }
 
-    function openMsg3Modal(){document.getElementById("msg3-modal").classList.remove("hidden");}
-    function closeMsg3Modal(){document.getElementById("msg3-modal").classList.add("hidden");}
-    function handleMsg3Action(a){const m=document.getElementById("missed-months").value;if(!m)return showNotification("Enter months!");const c=getSignedContent(messages[2].text.replace("{missed_months}",m));closeMsg3Modal();a==='copy'?copyText(c):shareText(c);}
-
-    function openMsg4Modal(){document.getElementById("msg4-modal").classList.remove("hidden");}
-    function closeMsg4Modal(){document.getElementById("msg4-modal").classList.add("hidden");}
-    function handleMsg4Action(a){const s=document.getElementById("maturity-account-suffix").value;if(s.length!==4)return showNotification("Enter exactly 4 digits!");const c=getSignedContent(messages[3].text.replace("{account_suffix}",s));closeMsg4Modal();a==='copy'?copyText(c):shareText(c);}
-
-    function openMsg6Modal(){document.getElementById("msg6-modal").classList.remove("hidden");}
-    function closeMsg6Modal(){document.getElementById("msg6-modal").classList.add("hidden");}
-    function handleMsg6Action(a){const s=document.getElementById("account-suffix").value,amt=document.getElementById("deposit-amount").value,dt=document.getElementById("deposit-date").value.split("-").reverse().join("-"),bal=document.getElementById("current-balance").value;if(s.length!==4||!amt||!dt||!bal)return showNotification("Fill all fields!");const c=getSignedContent(messages[5].text.replace("{account_suffix}",s).replace("{deposit_amount}",amt).replace("{deposit_date}",dt).replace("{current_balance}",bal));closeMsg6Modal();a==='copy'?copyText(c):shareText(c);}
-
-    function openMsg7Modal(){document.getElementById("msg7-modal").classList.remove("hidden");}
-    function closeMsg7Modal(){document.getElementById("msg7-modal").classList.add("hidden");}
-    function handleMsg7Action(a){const amt=document.getElementById("received-amount").value;if(!amt)return showNotification("Enter amount!");const c=getSignedContent(messages[6].text.replace("{received_amount}",amt));closeMsg7Modal();a==='copy'?copyText(c):shareText(c);}
-  </script>
+        function formatCurrency(input) {
+            let val = input.value.replace(/,/g, "").replace(/\D/g, "");
+            if (!val) return input.value = "";
+            input.value = Number(val).toLocaleString("en-IN");
+        }
+    </script>
 </body>
 </html>
